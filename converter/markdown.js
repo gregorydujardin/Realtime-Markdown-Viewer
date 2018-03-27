@@ -49,7 +49,11 @@ var parseStrong = function(str) {
   var linkRegExp = /\[([^\[]+)\]\(([^\)]+)\)/;
   var stra = [];
   while ((stra = linkRegExp.exec(str)) !== null) {
-    str = str.replace(stra[0], '<a ' + 'href="' + stra[2] + '">' + stra[1] + '</a>');
+    if (stra[0].substr(0, 1) === '!') {
+      str = str.replace(stra[0], '<img src="' + stra[2] + '" alt="' + stra[1] + '" title="' + stra[1] + '" />\n');
+    } else {
+      str = str.replace(stra[0], '<a ' + 'href="' + stra[2] + '">' + stra[1] + '</a>');
+    }
   }
   return str;
  }
@@ -69,6 +73,15 @@ var parseNewLine = function(str) {
   var stra = [];
   while ((stra = codeRegExp.exec(str)) !== null) {
     str = str.replace(stra[0], '<pre>' + stra[1] + '</pre>');
+  }
+  return str;
+ }
+
+ var parseCodeBlock = function(str) {
+  var codeRegExp = /```(.*?)```/;
+  var stra = [];
+  while ((stra = codeRegExp.exec(str)) !== null) {
+    str = str.replace(stra[0], '<code>' + stra[1] + '</code>');
   }
   return str;
  }
@@ -104,6 +117,7 @@ var markdown = {
     str = parseCode(str);
     str = parseBlockQuote(str);
     str = parseDel(str);
+    str = parseCodeBlock(str);
     return str;
   }
 };
